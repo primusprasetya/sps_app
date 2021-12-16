@@ -1,0 +1,24 @@
+<svg width="79" height="50" viewBox="0 0 79 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_b_339_93)">
+<rect y="2" width="79" height="46" rx="23" fill="#D4F4F7" fill-opacity="0.12"/>
+</g>
+<rect x="13" width="52" height="50" rx="25" fill="#1A8993"/>
+<circle cx="39" cy="25" r="19" fill="#1FA2AD"/>
+<rect x="29" y="15" width="7" height="1.75" rx="0.875" fill="#D4F4F7"/>
+<rect x="30.75" y="15" width="7" height="1.75" rx="0.875" transform="rotate(90 30.75 15)" fill="#D4F4F7"/>
+<rect x="49" y="15" width="7" height="1.75" rx="0.875" transform="rotate(90 49 15)" fill="#D4F4F7"/>
+<rect x="49" y="16.75" width="7" height="1.75" rx="0.875" transform="rotate(-180 49 16.75)" fill="#D4F4F7"/>
+<rect x="49" y="35" width="7" height="1.75" rx="0.875" transform="rotate(-180 49 35)" fill="#D4F4F7"/>
+<rect x="47.25" y="35" width="7" height="1.75" rx="0.875" transform="rotate(-90 47.25 35)" fill="#D4F4F7"/>
+<rect x="29" y="35" width="7" height="1.75" rx="0.875" transform="rotate(-90 29 35)" fill="#D4F4F7"/>
+<rect x="29" y="33.25" width="7" height="1.75" rx="0.875" fill="#D4F4F7"/>
+<rect x="29" y="24" width="20" height="2" rx="1" fill="#D4F4F7"/>
+<defs>
+<filter id="filter0_b_339_93" x="-4" y="-2" width="87" height="54" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feGaussianBlur in="BackgroundImage" stdDeviation="2"/>
+<feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_339_93"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_339_93" result="shape"/>
+</filter>
+</defs>
+</svg>
