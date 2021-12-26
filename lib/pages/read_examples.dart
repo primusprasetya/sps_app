@@ -36,7 +36,7 @@ class _ReadExamplesState extends State<ReadExamples> {
       setState(() {
         // _displayText = 'Today\'s Special: $description For Just  $price';
         // print(mydata.runtimeType);
-        _displayText = "set";
+        _displayText = "set fjnewnfufe";
       });
     });
   }
