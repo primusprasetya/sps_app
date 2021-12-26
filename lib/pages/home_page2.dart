@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sps_app/pages/scan_page.dart';
 import 'package:sps_app/theme.dart';
@@ -8,15 +9,16 @@ class HomePage2 extends StatelessWidget {
 
   get children => null;
   @override
+  
   Widget build(BuildContext context) {
-    Widget slotParkir(String kode) {
+    Widget slotParkir(String kode, int status) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 15.0),
         height: 72,
         width: 56,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color(0xff1A8993),
+          color: status == 1 ? Color(0xff1A8993) : status == 2 ? Color(0xff1EAC2C) : Color(0xffE84E4E) ,
           border: Border.all(
             color: secondaryColor,
             width: 2,
@@ -63,10 +65,10 @@ class HomePage2 extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      slotParkir('B1'),
-                      slotParkir('B2'),
-                      slotParkir('B3'),
-                      slotParkir('B4'),
+                      slotParkir('B1', 1),
+                      slotParkir('B2', 0),
+                      slotParkir('B3', 0),
+                      slotParkir('B4', 1),
                     ],
                   ),
                   Center(
@@ -81,9 +83,9 @@ class HomePage2 extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      slotParkir('B5'),
-                      slotParkir('B6'),
-                      slotParkir('B7'),
+                      slotParkir('B5',1),
+                      slotParkir('B6',0),
+                      slotParkir('B7',0),
                     ],
                   ),
                   const SizedBox(
@@ -123,9 +125,9 @@ class HomePage2 extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      slotParkir('A1'),
-                      slotParkir('A2'),
-                      slotParkir('A3'),
+                      slotParkir('A1', 2),
+                      slotParkir('A2', 1),
+                      slotParkir('A3', 1),
                     ],
                   ),
                   Center(
@@ -140,8 +142,8 @@ class HomePage2 extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      slotParkir('A4'),
-                      slotParkir('A5'),
+                      slotParkir('A4',0),
+                      slotParkir('A5',1),
                     ],
                   ),
                   const SizedBox(

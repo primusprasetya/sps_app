@@ -1,4 +1,4 @@
-package com.example.sps_app
+package com.tugasAkhir.sps_app
 
 import io.flutter.embedding.android.FlutterActivity
 
