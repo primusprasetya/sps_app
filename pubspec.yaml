@@ -82,6 +82,8 @@ flutter:
     - assets/images/icon_stairsup.png
     - assets/images/icon_stairsdown.png
     - assets/images/arrow.png
+    - assets/images/logo.png
+    - assets/images/full_logo.png
 
     # svg assets
     - assets/images/scan_btn.svg
