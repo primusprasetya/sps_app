@@ -17,9 +17,10 @@ TextStyle titleStyle =  TextStyle(
   fontWeight: FontWeight.w300,
   letterSpacing: 6,
 );
-TextStyle subtitleStyle =  TextStyle(
-  color: secondaryColor,
+TextStyle subtitleStyle =  const TextStyle(
+  color: Color(0xffD4F4F7),
   fontSize: 14,
+  letterSpacing: 1,
   fontWeight: FontWeight.w600,
 );
 

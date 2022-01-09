@@ -15,7 +15,7 @@ class ReadExamples extends StatefulWidget {
 } 
 
 class _ReadExamplesState extends State<ReadExamples> {
-  String _displayText = 'Results go here';
+  String _displayText = 'Results go herex';
   final _database = FirebaseDatabase.instance.reference();
   late StreamSubscription _dailySpecialStream;
 
@@ -27,16 +27,22 @@ class _ReadExamplesState extends State<ReadExamples> {
 
   void _activateListeners(){
     _dailySpecialStream =
-    _database.child('dailySpecial').onValue.listen((event) {
+    // _database.child('dailySpecial').onValue.listen((event) {
+    _database.child('serverSatu/slotParkir').onValue.listen((event) {
       // final Object? data = event.snapshot.value;
-      // final data = new Map<String, dynamic>.from(event.snapshot.value);
+      final data = Map<String, dynamic>.from(event.snapshot.value);
       // final description = data['description'] as String;
       // final price = data['price'] as double;
+      final status = data['A1'] as String;
+      final status2 = data['A2'] as String;
 
       setState(() {
         // _displayText = 'Today\'s Special: $description For Just  $price';
+        _displayText = 'Slot Parkir A1 : $status \n Slot Parkir A2 : $status2';
+        // _displayText = 'Satatus Parkiran: $status2';
+        print(data);
         // print(mydata.runtimeType);
-        _displayText = "set fjnewnfufe";
+        // _displayText = "set fj";
       });
     });
   }
@@ -54,6 +60,7 @@ class _ReadExamplesState extends State<ReadExamples> {
           child: Column(
             children: [
               Text(_displayText),
+              // Text(_displayText),
             ],
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:animated_splash_screen/animated_splash_screen.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -32,8 +33,10 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: Colors.white,
       ),
       routes: {
-        '/': (context) => const MyHomePage(title: '',),
-        // '/home_page': (context) => const HomePage2(),
+        // '/': (context) => const MyHomePage(title: '',),
+        '/': (context) => const SplashPage(),
+        '/home_page2': (context) => const HomePage2(),
+        // '/read_example': (context) => const ReadExamples(),
       },
     //  home: const HomePage(),
       

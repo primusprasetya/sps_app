@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:sps_app/theme.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 
 class ScanPage extends StatefulWidget {
   const ScanPage({ Key? key }) : super(key: key);
@@ -10,9 +14,43 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
-
+  
   Barcode? qr;
   QRViewController? qrController;
+  final _database = FirebaseDatabase.instance.reference();
+  late StreamSubscription _dailySpecialStream;
+
+  void updateData(){
+   _dailySpecialStream =
+    _database.child('serverSatu/slotParkir').onValue.listen((event) {
+      final data = Map<String, dynamic>.from(event.snapshot.value);
+
+      print(data);
+     
+     late var cek = true;
+      data.forEach((index, value){
+        if(cek){
+          if(value == 0){
+            data[index] = 2;
+            cek = false;
+          }
+        }
+      });
+      print(data);
+      print(cek);
+    _database
+    .child('serverSatu/slotParkir')
+    // .child('serverDua/slotParkir')
+    // .push()
+    .update(data);
+    });
+
+    /* for (initial value; termination_condition; step){
+      statements
+    }
+     */
+    
+  }
 
   final qrKey = GlobalKey(debugLabel: 'QR');
 
@@ -82,9 +120,15 @@ class _ScanPageState extends State<ScanPage> {
     });
     qrController.scannedDataStream.listen((qr) {
       setState(() {
+        // print();
         this.qr = qr;
+        qrController.stopCamera();
       });
+      if(qr != null){
+        updateData();
+      }
     });
+
   }
 
 }
