@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sps_app/pages/scan_page.dart';
+// import 'package:sps_app/pages/scan_page.dart';
 import 'package:sps_app/theme.dart';
 
 class HomePage2 extends StatefulWidget {
@@ -15,9 +15,10 @@ class HomePage2 extends StatefulWidget {
 }
 
 class _HomePage2State extends State<HomePage2> {
+   TextEditingController platnomorController = TextEditingController (text: '');
   // get children => null;
-  String _displayText = 'Results go herex';
   final _database = FirebaseDatabase.instance.reference();
+  // String _displayText = 'Results go herex';
   late StreamSubscription _dailySpecialStream;
 
   // slot parkir lantai 1
@@ -39,32 +40,35 @@ class _HomePage2State extends State<HomePage2> {
 
   @override
   void initState(){
+    print('123');
     super.initState();
+
     _activateListeners();
   }
+  
   void _activateListeners(){
     _dailySpecialStream =
-     _database.child('serverSatu/slotParkir').onValue.listen((event) {
+     _database.child('server').onValue.listen((event) {
       final data = Map<String, dynamic>.from(event.snapshot.value);
       setState(() {
 
         // slot parkir lantai 1
-        statusA1 = data['A1'] as int;
-        statusA2 = data['A2'] as int;
-        statusA3 = data['A3'] as int;
-        statusA4 = data['A4'] as int;
-        statusA5 = data['A5'] as int;
+        statusA1 = data['server1']['slotParkir']['A1'] as int;
+        statusA2 = data['server1']['slotParkir']['A2'] as int;
+        statusA3 = data['server1']['slotParkir']['A3'] as int;
+        statusA4 = data['server1']['slotParkir']['A4'] as int;
+        statusA5 = data['server1']['slotParkir']['A5'] as int;
 
         // slot parkir lantai 2
-        statusB1 = data['B1'] as int;
-        statusB2 = data['B2'] as int;
-        statusB3 = data['B3'] as int;
-        statusB4 = data['B4'] as int;
-        statusB5 = data['B5'] as int;
-        statusB6 = data['B6'] as int;
-        statusB7 = data['B7'] as int;
-        _displayText = 'Slot Parkir A1 : $statusA1 \n Slot Parkir A2 : $statusA2';
-        print(data['A1']);
+        statusB1 = data['server2']['slotParkir']['B2'] as int;
+        statusB2 = data['server2']['slotParkir']['B3'] as int;
+        statusB3 = data['server2']['slotParkir']['B4'] as int;
+        statusB4 = data['server2']['slotParkir']['B5'] as int;
+        statusB5 = data['server2']['slotParkir']['B6'] as int;
+        statusB6 = data['server2']['slotParkir']['B7'] as int;
+        statusB7 = data['server2']['slotParkir']['B8'] as int;
+        // _displayText = 'Slot Parkir A1 : $statusA1 \n Slot Parkir A2 : $statusA2';
+        
       });
     });
   }
@@ -191,108 +195,7 @@ class _HomePage2State extends State<HomePage2> {
               ));
     }
 
-    Future<void> formPlat() {
-      return showDialog(
-          context: context,
-          builder: (BuildContext context) => Container(
-                // margin: EdgeInsets.zero,
-                width: MediaQuery.of(context).size.width - (2 * 3.0),
-                child: AlertDialog(
-                  backgroundColor: Color(0xff16727A),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  content: SingleChildScrollView(
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Icon(
-                              Icons.close,
-                              color: Color(0xff7EBABF),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // const SizedBox(height: 12),
-                        Container(
-                          // width: 66.0,
-                          height: 50.0,
-
-                          decoration: BoxDecoration(
-                            color: Color(0xff1A8993),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Center(
-                              child: Row(
-                            children: [
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Expanded(
-                                child: TextFormField(
-                                  style: subtitleStyle.copyWith(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  decoration: InputDecoration.collapsed(
-                                    hintText: 'Plat Nomor',
-                                    hintStyle: subtitleStyle.copyWith(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          )),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'silahkan masukan nomor plat anda',
-                          style: subtitleStyle.copyWith(
-                            fontSize: 12,
-                            letterSpacing: 1.5,
-                            color: Color(0xffffffff),
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Container(
-                          width: 150,
-                          height: 40,
-                          margin: EdgeInsets.zero,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(builder: (context) => const ScanPage()),
-                                // );                  
-                              
-                                          
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: Color(0xff1A8993),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text('Input', style: subtitleStyle),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ));
-    }
-
+   
     Future<void> petunjukParkiran() {
       return showDialog(
           context: context,
@@ -429,10 +332,124 @@ class _HomePage2State extends State<HomePage2> {
               ));
     }
 
+     Future<void> formPlat() {
+      return showDialog(
+         context: context,
+          builder: (BuildContext context) => Container(
+                // margin: EdgeInsets.zero,
+                width: MediaQuery.of(context).size.width - (2 * 3.0),
+                child: AlertDialog(
+                  backgroundColor: Color(0xff16727A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(
+                              Icons.close,
+                              color: Color(0xff7EBABF),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // const SizedBox(height: 12),
+                        Container(
+                          // width: 66.0,
+                          height: 50.0,
+
+                          decoration: BoxDecoration(
+                            color: Color(0xff1A8993),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                              child: Row(
+                            children: [
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  style: subtitleStyle.copyWith(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  controller: platnomorController,
+                                  decoration: InputDecoration.collapsed(
+                                    hintText: 'Plat Nomor',
+                                    hintStyle: subtitleStyle.copyWith(
+                                      color: Color(0XFF296C72),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'silahkan masukan nomor plat anda',
+                          style: subtitleStyle.copyWith(
+                            fontSize: 12,
+                            letterSpacing: 1.5,
+                            color: Color(0xffffffff),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Container(
+                          width: 150,
+                          height: 40,
+                          margin: EdgeInsets.zero,
+                          child: TextButton(
+                            onPressed: () {
+                             final logRef = <String, dynamic>{
+                               'Plat Kendaraan': platnomorController.text,
+                              //  'time': DateTime.now().millisecondsSinceEpoch 
+                               'time': DateTime.now().toString()
+                             };
+                             print(platnomorController.text);
+                             _database
+                             .child('logs')
+                             .push()
+                             .set(logRef)
+                             .then((_) => print('berhasil menginput plat nomor'))
+                             .catchError((error)=> print('terjadi error $error'));
+                              Navigator.pop(context);
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => const ScanPage()),
+                              // );
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: Color(0xff1FA2AD),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text('Input', style: subtitleStyle),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ));
+    }
     Widget slotParkir(String kode, int status) {
       return InkWell(
         onTap: () {
-          formPlat();
+          // formPlat();
           // showConfirmDialog();
           //  qrcodePOP();
           // petunjukParkiran();
@@ -637,11 +654,6 @@ class _HomePage2State extends State<HomePage2> {
               child: InkWell(
                 onTap: () {
                   formPlat();
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ScanPage()),
-                  );
                 },
                 child: Container(
                   child: SvgPicture.asset(
@@ -666,4 +678,11 @@ class _HomePage2State extends State<HomePage2> {
       ),
     );
   }
+
+  //   @override
+  // void deactivate(){
+  //   _dailySpecialStream.cancel();
+  //   super.deactivate();
+  // }
+
 }
