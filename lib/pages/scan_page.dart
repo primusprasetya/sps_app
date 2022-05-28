@@ -51,7 +51,9 @@ class _ScanPageState extends State<ScanPage> {
           final random = 'A' + namaFungsi().toString();
           if (data['server1']['slotParkir'][random] == 0) {
             SharedPreferences prefs = await SharedPreferences.getInstance();
-            _database.child('server/server1/slotParkir').update({random: 2});
+            _database
+            .child('server/server1/slotParkir')
+            .update({random: 2});
             prefs.setString('_indexSlot', random);
             break;
           }
