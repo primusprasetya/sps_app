@@ -29,16 +29,6 @@ class _ScanPageState extends State<ScanPage> {
   @override
   void initState() {
     super.initState();
-    print("nilai random");
-    print(namaFungsi());
-    print("nilai random a");
-    print(namaFungsi());
-    print("nilai random b");
-    print(namaFungsi());
-    print("nilai random c");
-    print(namaFungsi());
-    print("nilai random d");
-    print(namaFungsi());
   }
 // void _getData() async {
 
@@ -49,37 +39,89 @@ class _ScanPageState extends State<ScanPage> {
   //   });
   // }
 
-  void mobilMasuk() {
-    var cek = true;
-    var i = 0;
-    _dailySpecialStream =
-        _database.child('server').onValue.listen((event) async {
+  void mobilMasukBro() {
+
+    _dailySpecialStream = _database.child('server').onValue.listen((event) async {
+
       final data = Map<String, dynamic>.from(event.snapshot.value);
-      print("nilai sebelumnya");
-      print(data['server1']['slotParkir']['A2']);
-      print(data);
+
+      for (var i = 1; i <= 8; i++) {
+        // LANTAI 1 TOD
+        if (i>=1 || i<=4) {
+          final random = 'A' + namaFungsi().toString();
+          if (data['server1']['slotParkir'][random] == 0) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            _database.child('server/server1/slotParkir').update({random: 2});
+            prefs.setString('_indexSlot', random);
+            break;
+          }
+        // LANTAI 2 TOD
+        } else {
+          final random = 'B' + namaFungsi().toString();
+          if (data['server2']['slotParkir'][random] == 0) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            _database.child('server/server2/slotParkir').update({random: 2});
+            prefs.setString('_indexSlot', random);
+            break;
+          }
+        }
+      }
+      // print("Ini yang z print TOD $data");
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomePage2()));
+      });
+
+    });
+
+  }
+
+  void mobilMasuk() {
+    bool cek = true;
+    // int i = 0;
+    _dailySpecialStream = _database.child('server').onValue.listen((event) async {
+      final data = Map<String, dynamic>.from(event.snapshot.value);
+      // print("nilai sebelumnya");
+      // print(data['server1']['slotParkir']['A2']);
+      // print(data);
       do {
-        var random = 'A' + namaFungsi().toString();
+
+        final random = 'A' + namaFungsi().toString();
+        print("Nilai Random : $random");
         if (data['server1']['slotParkir'][random] == 0) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          _database.child('server/server1/slotParkir').update({random: 2});
-          cek = false;
+          _database
+          .child('server/server1/slotParkir')
+          .update({random: 2});
+          setState(() {
+            cek = false;         
+          });     
           // _indexSlot = indexSlot;
           prefs.setString('_indexSlot', random);
 
-          Future.delayed(const Duration(milliseconds: 2000), () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const HomePage2()));
-          });
         }
-        i++;
-        if(i > 40){
-          cek = false;
-        }
-        print(random);
-        print("bawahnya random");
-        print(i);
+        // i++;
+        // if(i > 40){
+        //   setState(() {
+        //     print("False Bro");
+        //     cek = false;         
+        //   });
+        // }
+        // print(random);
+        // print("bawahnya random");
+        // print(i);
       } while (cek);
+
+      int i = 1;
+      do {
+        print("Prime & Ratno");
+        i++;
+      } while (i<=10);
+
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomePage2()));
+      });
 
 
       // data.forEach((indexServer, valueServer) async{
@@ -213,7 +255,8 @@ class _ScanPageState extends State<ScanPage> {
       if (qr != null) {
         if (qr.code == '45ee449a2a3d32ed72eee8578a0d1cdd') {
           openPortal();
-          mobilMasuk();
+          // mobilMasuk();
+          mobilMasukBro();
         } else {
           Future.delayed(const Duration(milliseconds: 1000), () {
             Navigator.pushReplacement(
