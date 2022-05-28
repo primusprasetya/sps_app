@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:sps_app/pages/scan_page.dart';
+import 'package:sps_app/pages/scan_page.dart';
 import 'package:sps_app/theme.dart';
 
 class HomePage2 extends StatefulWidget {
@@ -15,11 +17,14 @@ class HomePage2 extends StatefulWidget {
 }
 
 class _HomePage2State extends State<HomePage2> {
-   TextEditingController platnomorController = TextEditingController (text: '');
+  TextEditingController platnomorController = TextEditingController(text: '');
   // get children => null;
   final _database = FirebaseDatabase.instance.reference();
   // String _displayText = 'Results go herex';
   late StreamSubscription _dailySpecialStream;
+  final _formKey = GlobalKey<FormState>();
+  String _noPlat = '';
+  // String? _indexSlot= '';
 
   // slot parkir lantai 1
   late var statusA1 = 0;
@@ -36,22 +41,29 @@ class _HomePage2State extends State<HomePage2> {
   late var statusB5 = 0;
   late var statusB6 = 0;
   late var statusB7 = 0;
-  
 
   @override
-  void initState(){
+  void initState() {
     print('123');
     super.initState();
-
+    _getData();
     _activateListeners();
   }
-  
-  void _activateListeners(){
-    _dailySpecialStream =
-     _database.child('server').onValue.listen((event) {
+
+  void _getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // untuk Mengclear cache secara manual
+    await prefs.clear();
+    setState(() {
+      _noPlat = prefs.getString('_noPlat')!;
+      //  _indexSlot = prefs.getString('_indexSlot');
+    });
+  }
+
+  void _activateListeners() {
+    _dailySpecialStream = _database.child('server').onValue.listen((event) {
       final data = Map<String, dynamic>.from(event.snapshot.value);
       setState(() {
-
         // slot parkir lantai 1
         statusA1 = data['server1']['slotParkir']['A1'] as int;
         statusA2 = data['server1']['slotParkir']['A2'] as int;
@@ -67,83 +79,110 @@ class _HomePage2State extends State<HomePage2> {
         statusB5 = data['server2']['slotParkir']['B6'] as int;
         statusB6 = data['server2']['slotParkir']['B7'] as int;
         statusB7 = data['server2']['slotParkir']['B8'] as int;
+
         // _displayText = 'Slot Parkir A1 : $statusA1 \n Slot Parkir A2 : $statusA2';
-        
       });
     });
   }
 
-
-
-  
   @override
   Widget build(BuildContext context) {
-    Future<void> showConfirmDialog() async {
-      return showDialog(
-          context: context,
-          builder: (BuildContext context) => Container(
-                margin: EdgeInsets.zero,
-                width: MediaQuery.of(context).size.width - (2 * defaultMargin),
-                child: AlertDialog(
-                  backgroundColor: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  content: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Icon(
-                              Icons.close,
-                              color: primarybtnColor,
-                            ),
-                          ),
-                        ),
-                        Icon(
-                          Icons.error_outline_rounded,
-                          color: primaryColor,
-                          size: 100,
-                        ),
-                        const SizedBox(height: 12),
-                        Text('Pesanan Ini Dibatalkan?', style: subtitleStyle),
-                        const SizedBox(height: 12),
-                        Text('Pesanan ini akan di Batalkan',
-                            style: subtitleStyle),
-                        Text('secara permanen', style: subtitleStyle),
-                        const SizedBox(height: 20),
-                        Container(
-                          width: 150,
-                          height: 40,
-                          margin: EdgeInsets.zero,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              // onSubmitCancel();
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.grey,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text('Ya, Batalkan', style: subtitleStyle),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ));
+    // Future<void> showConfirmDialog() async {
+    //   return showDialog(
+    //       context: context,
+    //       builder: (BuildContext context) => Container(
+    //             margin: EdgeInsets.zero,
+    //             width: MediaQuery.of(context).size.width - (2 * defaultMargin),
+    //             child: AlertDialog(
+    //               backgroundColor: primaryColor,
+    //               shape: RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.circular(30),
+    //               ),
+    //               content: SingleChildScrollView(
+    //                 child: Column(
+    //                   children: [
+    //                     Align(
+    //                       alignment: Alignment.centerLeft,
+    //                       child: InkWell(
+    //                         onTap: () {
+    //                           Navigator.pop(context);
+    //                         },
+    //                         child: Icon(
+    //                           Icons.close,
+    //                           color: primarybtnColor,
+    //                         ),
+    //                       ),
+    //                     ),
+    //                     Icon(
+    //                       Icons.error_outline_rounded,
+    //                       color: primaryColor,
+    //                       size: 100,
+    //                     ),
+    //                     const SizedBox(height: 12),
+    //                     Text('Pesanan Ini Dibatalkan?', style: subtitleStyle),
+    //                     const SizedBox(height: 12),
+    //                     Text('Pesanan ini akan di Batalkan',
+    //                         style: subtitleStyle),
+    //                     Text('secara permanen', style: subtitleStyle),
+    //                     const SizedBox(height: 20),
+    //                     Container(
+    //                       width: 150,
+    //                       height: 40,
+    //                       margin: EdgeInsets.zero,
+    //                       child: TextButton(
+    //                         onPressed: () {
+    //                           Navigator.pop(context);
+    //                           // onSubmitCancel();
+    //                         },
+    //                         style: TextButton.styleFrom(
+    //                           backgroundColor: Colors.grey,
+    //                           shape: RoundedRectangleBorder(
+    //                             borderRadius: BorderRadius.circular(12),
+    //                           ),
+    //                         ),
+    //                         child: Text('Ya, Batalkan', style: subtitleStyle),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //           ));
+    // }
+
+    Future<void> _myAlertDialog() async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Peringatan'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: const <Widget>[
+                  Text('Anda tidak dapat melakukan scan dikarenakan slot parkir telah penuh'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Mengerti'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
 
-    Future<void> qrcodePOP() {
+    Future<void> qrcodePOP() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? _indexSlot = prefs.getString('_indexSlot');
       return showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) => Container(
                 // margin: EdgeInsets.zero,
                 width: MediaQuery.of(context).size.width - (2 * 3.0),
@@ -159,7 +198,14 @@ class _HomePage2State extends State<HomePage2> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              print('close');
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.clear();
+                              setState(() {
+                                _noPlat = '';
+                              });
                               Navigator.pop(context);
                             },
                             child: Icon(
@@ -168,16 +214,17 @@ class _HomePage2State extends State<HomePage2> {
                             ),
                           ),
                         ),
-                        // const SizedBox(height: 12),
+                        const SizedBox(height: 20),
                         Container(
-                          // width: 66.0,
-                          height: 300.0,
-                          decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  image:
-                                      AssetImage('assets/images/qrcode.png'))),
+                          width: 250.0,
+                          height: 250.0,
+                          child: QrImage(
+                            data: platnomorController.text + '-' + _indexSlot!,
+                            size: 200,
+                            backgroundColor: Colors.white,
+                          ),
                         ),
-                        // const SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Text(
                           'Silahkan arahkan QR Code ke mesin scan untuk membuka portal',
                           style: subtitleStyle.copyWith(
@@ -195,7 +242,6 @@ class _HomePage2State extends State<HomePage2> {
               ));
     }
 
-   
     Future<void> petunjukParkiran() {
       return showDialog(
           context: context,
@@ -332,9 +378,10 @@ class _HomePage2State extends State<HomePage2> {
               ));
     }
 
-     Future<void> formPlat() {
+    Future<void> formPlat() {
       return showDialog(
-         context: context,
+          context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) => Container(
                 // margin: EdgeInsets.zero,
                 width: MediaQuery.of(context).size.width - (2 * 3.0),
@@ -375,20 +422,36 @@ class _HomePage2State extends State<HomePage2> {
                               SizedBox(
                                 width: 16,
                               ),
-                              Expanded(
-                                child: TextFormField(
-                                  style: subtitleStyle.copyWith(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  controller: platnomorController,
-                                  decoration: InputDecoration.collapsed(
-                                    hintText: 'Plat Nomor',
-                                    hintStyle: subtitleStyle.copyWith(
-                                      color: Color(0XFF296C72),
+                              Form(
+                                key: _formKey,
+                                child: Expanded(
+                                  child: TextFormField(
+                                    style: subtitleStyle.copyWith(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                     ),
+                                    controller: platnomorController,
+                                    decoration: InputDecoration.collapsed(
+                                      hintText: 'Plat Nomor',
+                                      hintStyle: subtitleStyle.copyWith(
+                                        color: Color(0XFF296C72),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Membutuhkan Plat Nomor';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (value) async {
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      await prefs.clear();
+                                      _noPlat = value!;
+                                      prefs.setString('_noPlat', _noPlat);
+                                    },
                                   ),
                                 ),
                               )
@@ -410,26 +473,39 @@ class _HomePage2State extends State<HomePage2> {
                           width: 150,
                           height: 40,
                           margin: EdgeInsets.zero,
-                          child: TextButton(
+                          child: ElevatedButton(
                             onPressed: () {
-                             final logRef = <String, dynamic>{
-                               'Plat Kendaraan': platnomorController.text,
-                              //  'time': DateTime.now().millisecondsSinceEpoch 
-                               'time': DateTime.now().toString()
-                             };
-                             print(platnomorController.text);
-                             _database
-                             .child('logs')
-                             .push()
-                             .set(logRef)
-                             .then((_) => print('berhasil menginput plat nomor'))
-                             .catchError((error)=> print('terjadi error $error'));
-                              Navigator.pop(context);
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => const ScanPage()),
-                              // );
+                              if (_formKey.currentState != null &&
+                                  _formKey.currentState!.validate()) {
+                                print("validated");
+                                final logRef = <String, dynamic>{
+                                  'platKendaraan': platnomorController.text,
+                                  //  'time': DateTime.now().millisecondsSinceEpoch
+
+                                  'time': DateTime.now().toString()
+                                };
+                                print(platnomorController.text);
+                                _database
+                                    .child('logs')
+                                    .push()
+                                    .set(logRef)
+                                    .then((_) =>
+                                        print('berhasil menginput plat nomor'))
+                                    .catchError((error) =>
+                                        print('terjadi error $error'));
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const ScanPage()),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Processing Data')));
+                              } else
+                                print("not validated");
+                              _formKey.currentState!.save();
+                              // print(_noPlat);
                             },
                             style: TextButton.styleFrom(
                               backgroundColor: Color(0xff1FA2AD),
@@ -446,13 +522,108 @@ class _HomePage2State extends State<HomePage2> {
                 ),
               ));
     }
+
+    var himpunanData = [
+      statusA1,
+      statusA2,
+      statusA3,
+      statusA4,
+      statusA5,
+      statusB1,
+      statusB2,
+      statusB3,
+      statusB4,
+      statusB5,
+      statusB6,
+      statusB7
+    ];
+    var tidakPenuh = himpunanData.contains(0);
+    Widget btnEnable() {
+      return InkWell(
+        onTap: () {
+          formPlat();
+        },
+        child: Container(
+          child: SvgPicture.asset(
+            'assets/images/scan_btn.svg',
+            width: 120,
+          ),
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xff083033).withOpacity(0.2),
+                spreadRadius: 0,
+                blurRadius: 26,
+                offset: Offset(0, 24), // changes position of shadow
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget btnDisable() {
+      return InkWell(
+        onTap: () {
+          _myAlertDialog();
+        },
+        child: Container(
+          child: SvgPicture.asset(
+            'assets/images/scan_btn_disable.svg',
+            width: 120,
+          ),
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xff083033).withOpacity(0.2),
+                spreadRadius: 0,
+                blurRadius: 26,
+                offset: Offset(0, 24), // changes position of shadow
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget buttonScan() {
+      if (tidakPenuh) {
+        return btnEnable();
+      } else {
+        return btnDisable();
+      }
+    }
+
+    Widget buttonQR() {
+      return InkWell(
+        onTap: () {
+          qrcodePOP();
+        },
+        child: Container(
+          child: SvgPicture.asset(
+            'assets/images/btn_qrcode.svg',
+            width: 120,
+          ),
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xff083033).withOpacity(0.2),
+                spreadRadius: 0,
+                blurRadius: 26,
+                offset: Offset(0, 24), // changes position of shadow
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     Widget slotParkir(String kode, int status) {
       return InkWell(
         onTap: () {
-          // formPlat();
           // showConfirmDialog();
-          //  qrcodePOP();
-          // petunjukParkiran();
+          // qrcodePOP();
+          petunjukParkiran();
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(builder: (context) => const ScanPage()),
@@ -490,6 +661,14 @@ class _HomePage2State extends State<HomePage2> {
           ),
         ),
       );
+    }
+
+    Widget _customBtn() {
+      // setState(() {
+      if (_noPlat != '') {
+        return buttonQR();
+      }
+      return buttonScan();
     }
 
     return Scaffold(
@@ -651,28 +830,8 @@ class _HomePage2State extends State<HomePage2> {
             ),
             Align(
               alignment: Alignment(0.0, 1),
-              child: InkWell(
-                onTap: () {
-                  formPlat();
-                },
-                child: Container(
-                  child: SvgPicture.asset(
-                    'assets/images/scan_btn.svg',
-                    width: 120,
-                  ),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xff083033).withOpacity(0.2),
-                        spreadRadius: 0,
-                        blurRadius: 26,
-                        offset: Offset(0, 24), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+              child: _customBtn(),
+            )
           ],
         ),
       ),

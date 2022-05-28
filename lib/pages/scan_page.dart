@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:sps_app/pages/home_page2.dart';
 import 'package:sps_app/theme.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({Key? key}) : super(key: key);
@@ -13,32 +16,123 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
-  TextEditingController platnomorController = TextEditingController (text: '');
-
+  TextEditingController platnomorController = TextEditingController(text: '');
 
   Barcode? qr;
   QRViewController? qrController;
   final _database = FirebaseDatabase.instance.reference();
   late StreamSubscription _dailySpecialStream;
 
-  void updateData() {
+  late var status = 0;
+  // String? _indexSlot= '';
+
+  @override
+  void initState() {
+    super.initState();
+    print("nilai random");
+    print(namaFungsi());
+    print("nilai random a");
+    print(namaFungsi());
+    print("nilai random b");
+    print(namaFungsi());
+    print("nilai random c");
+    print(namaFungsi());
+    print("nilai random d");
+    print(namaFungsi());
+  }
+// void _getData() async {
+
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   // await prefs.clear();
+  //   setState(() {
+  //     _indexSlot = prefs.getString('_indexSlot');
+  //   });
+  // }
+
+  void mobilMasuk() {
     var cek = true;
-    _dailySpecialStream = _database.child('server').onValue.listen((event) {
+    var i = 0;
+    _dailySpecialStream =
+        _database.child('server').onValue.listen((event) async {
       final data = Map<String, dynamic>.from(event.snapshot.value);
-
+      print("nilai sebelumnya");
+      print(data['server1']['slotParkir']['A2']);
       print(data);
+      do {
+        var random = 'A' + namaFungsi().toString();
+        if (data['server1']['slotParkir'][random] == 0) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          _database.child('server/server1/slotParkir').update({random: 2});
+          cek = false;
+          // _indexSlot = indexSlot;
+          prefs.setString('_indexSlot', random);
 
-      print("SERVER");
-      data.forEach((indexServer, valueServer) {
-        valueServer['slotParkir'].forEach((indexSlot, valueSlot) {
-          if (valueSlot == 0 && cek) {
-            _database
-                .child('server/' + indexServer + '/slotParkir')
-                .update({indexSlot: 2});
-            cek = false;
-          }
-        });
-      });
+          Future.delayed(const Duration(milliseconds: 2000), () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomePage2()));
+          });
+        }
+        i++;
+        if(i > 40){
+          cek = false;
+        }
+        print(random);
+        print("bawahnya random");
+        print(i);
+      } while (cek);
+
+
+      // data.forEach((indexServer, valueServer) async{
+      //   SharedPreferences prefs =
+      //   await SharedPreferences.getInstance();
+      //   valueServer['slotParkir'].forEach((indexSlot, valueSlot) {
+      //     if (valueSlot == 0 && cek) {
+      //       _database
+      //           .child('server/' + indexServer + '/slotParkir')
+      //           .update({indexSlot: 2});
+      //       cek = false;
+      //       // _indexSlot = indexSlot;
+      //        prefs.setString('_indexSlot', indexSlot);
+
+      //       Future.delayed(const Duration(milliseconds: 2000), (){
+      //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage2()));
+      //       });
+
+      //     }
+      //   });
+      // });
+    });
+  }
+
+  int namaFungsi() {
+    var x = 0;
+    var a = 1;
+    var rn = 1;
+    var no = new Random();
+    // print('fungsi pengacakan');
+    for (var i = 0; i < no.nextInt(100); i++) {
+      x = (1 * rn + i) % 4;
+      rn = x;
+      if (x == 0) x = rn;
+    }
+
+    return x + 1;
+  }
+
+  void openPortal() {
+    var cek = true;
+    print('da masukjikah?');
+    _dailySpecialStream =
+        _database.child('portalParkiran').onValue.listen((event) {
+      final data = Map<String, dynamic>.from(event.snapshot.value);
+      print(data);
+      print("=====================");
+      final status = data['status'] as int;
+      print(status);
+      if (status == 0 && cek) {
+        _database.child('portalParkiran').update({'status': 2});
+        cek = false;
+      }
     });
   }
 
@@ -52,119 +146,6 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Future<void> formPlat() {
-    //   return showDialog(
-    //      context: context,
-    //       builder: (BuildContext context) => Container(
-    //             // margin: EdgeInsets.zero,
-    //             width: MediaQuery.of(context).size.width - (2 * 3.0),
-    //             child: AlertDialog(
-    //               backgroundColor: Color(0xff16727A),
-    //               shape: RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.circular(12),
-    //               ),
-    //               content: SingleChildScrollView(
-    //                 child: Column(
-    //                   // mainAxisAlignment: MainAxisAlignment.center,
-    //                   children: [
-    //                     Align(
-    //                       alignment: Alignment.centerLeft,
-    //                       child: InkWell(
-    //                         onTap: () {
-    //                           Navigator.pop(context);
-    //                         },
-    //                         child: Icon(
-    //                           Icons.close,
-    //                           color: Color(0xff7EBABF),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     const SizedBox(height: 20),
-    //                     // const SizedBox(height: 12),
-    //                     Container(
-    //                       // width: 66.0,
-    //                       height: 50.0,
-    //                       decoration: BoxDecoration(
-    //                         color: Color(0xff1A8993),
-    //                         borderRadius: BorderRadius.circular(12),
-    //                       ),
-    //                       child: Center(
-    //                           child: Row(
-    //                         children: [
-    //                           SizedBox(
-    //                             width: 16,
-    //                           ),
-    //                           Expanded(
-    //                             child: TextFormField(
-    //                               style: subtitleStyle.copyWith(
-    //                                 fontSize: 12,
-    //                                 fontWeight: FontWeight.w500,
-    //                               ),
-    //                               controller: platnomorController,
-    //                               decoration: InputDecoration.collapsed(
-    //                                 hintText: 'Plat Nomor',
-    //                                 hintStyle: subtitleStyle.copyWith(
-    //                                   color: Color(0XFF296C72),
-    //                                   fontSize: 12,
-    //                                   fontWeight: FontWeight.w500,
-    //                                 ),
-    //                               ),
-    //                             ),
-    //                           )
-    //                         ],
-    //                       )),
-    //                     ),
-    //                     const SizedBox(height: 12),
-    //                     Text(
-    //                       'silahkan masukan nomor plat anda',
-    //                       style: subtitleStyle.copyWith(
-    //                         fontSize: 12,
-    //                         letterSpacing: 1.5,
-    //                         color: Color(0xffffffff),
-    //                         fontWeight: FontWeight.w400,
-    //                       ),
-    //                     ),
-    //                     const SizedBox(height: 24),
-    //                     Container(
-    //                       width: 150,
-    //                       height: 40,
-    //                       margin: EdgeInsets.zero,
-    //                       child: TextButton(
-    //                         onPressed: () async{
-    //                          final logRef = <String, dynamic>{
-    //                            'Plat Kendaraan': platnomorController,
-    //                            'time': DateTime.now().millisecondsSinceEpoch 
-    //                          };
-    //                          print(platnomorController.text);
-    //                          _database
-    //                          .child('log')
-    //                          .push()
-    //                          .set(logRef)
-    //                          .then((_) => print('berhasil menginput plat nomor'))
-    //                          .catchError((error)=> print('terjadi error $error'));
-    //                           Navigator.pop(context);
-    //                           Navigator.push(
-    //                             context,
-    //                             MaterialPageRoute(
-    //                                 builder: (context) => const ScanPage()),
-    //                           );
-    //                         },
-    //                         style: TextButton.styleFrom(
-    //                           backgroundColor: Color(0xff1FA2AD),
-    //                           shape: RoundedRectangleBorder(
-    //                             borderRadius: BorderRadius.circular(12),
-    //                           ),
-    //                         ),
-    //                         child: Text('Input', style: subtitleStyle),
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ),
-    //           ));
-    // }
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -196,7 +177,9 @@ class _ScanPageState extends State<ScanPage> {
         color: Colors.white24,
       ),
       child: Text(
-        qr != null ? "Result: ${qr!.code}" : "Scan a code!",
+        qr?.code == '45ee449a2a3d32ed72eee8578a0d1cdd'
+            ? "sukses"
+            : "Scan VALID QRcode!",
         maxLines: 3,
       ),
     );
@@ -218,14 +201,25 @@ class _ScanPageState extends State<ScanPage> {
     setState(() {
       this.qrController = qrController;
     });
-    qrController.scannedDataStream.listen((qr) {
+    qrController.scannedDataStream.listen((qr) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         // print();
         this.qr = qr;
+        print('disini');
+        print(prefs.getString('_noPlat'));
         qrController.stopCamera();
       });
       if (qr != null) {
-        updateData();
+        if (qr.code == '45ee449a2a3d32ed72eee8578a0d1cdd') {
+          openPortal();
+          mobilMasuk();
+        } else {
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => super.widget));
+          });
+        }
       }
     });
   }
